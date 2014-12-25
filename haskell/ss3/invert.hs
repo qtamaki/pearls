@@ -1,5 +1,6 @@
+import Control.Monad.Writer
 
-default_func (x,y) = x * x `div` 3 + y - 3
+default_func (x,y) = x * 3 + y * 2
 
 invert :: ((Int,Int) -> Int) -> Int -> [Either (Int,Int) (Int,Int)]
 invert f z = do
@@ -45,6 +46,36 @@ bsearch g (a,b) z
   | otherwise  = bsearch g (a,m) z
     where m = (a + b) `div` 2
 
+type Wt = Writer [(Int,Int)]
+type WriteFunc = (Int,Int) -> Wt Int
+
+write_func :: WriteFunc
+write_func (x,y) = writer $ let z = default_func (x,y) in (z, [(x,y)])
+
+invert4' :: WriteFunc -> Int -> Wt [(Int,Int)]
+invert4' f z = do
+  m <- bsearch' (\y -> f (0,y)) (-1,z+1) z
+  find (0,m) f z
+    where
+    find :: (Int,Int) -> WriteFunc -> Int -> Wt [(Int,Int)]
+    find (u,v) f z = do 
+      n <- bsearch' (\x -> f (x,0)) (-1,z+1) z
+      z' <- f (u,v)
+      if u > n || v < 0 then return []
+        else if z' < z then find (u+1,v) f z
+          else if z' == z then do xs <- find (u+1,v-1) f z
+                                  return ((u,v):xs)
+            else if z' > z then find (u, v-1) f z
+              else return []
+
+bsearch' :: (Int -> Wt Int) -> (Int,Int) -> Int -> Wt Int
+bsearch' g (a,b) z
+  | a + 1 == b = return a
+  | otherwise = do x <- g m
+                   if x <= z then bsearch' g (m,b) z
+                             else bsearch' g (a,m) z
+    where m = (a + b) `div` 2
+
 invert_trace invs = rev $ foldl fun ([],[]) invs
                  where fun (xs, ys) res = case res of
                                             Right(x) -> (x:xs, ys)
@@ -52,9 +83,11 @@ invert_trace invs = rev $ foldl fun ([],[]) invs
                        rev (x,y) = (reverse x, reverse y)
 
 pp_invert (xs,ys) = do
-    mapM_ putStrLn $ fmap (pp "\t") xs
-    mapM_ putStrLn $ fmap (pp "\t\t") ys
+    mapM_ putStrLn $ fmap (pp "\t") ys
+    mapM_ putStrLn $ fmap (pp "\t\t") xs
+    putStrLn ""
     where pp d (zx,zy) = show zx ++ d ++ show zy
 
-main =  pp_invert $ invert_trace $ invert4 default_func 20
+main =  mapM_ pp_invert $ fmap (\f -> invert_trace $ f default_func 20) [invert, invert2, invert3, invert4]
 
+-- main = pp_invert $ runWriter $ invert4' write_func 20
