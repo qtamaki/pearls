@@ -35,3 +35,22 @@ bsearch g (a,b) z
   | otherwise  = bsearch g (a,m) z
     where m = (a + b) `div` 2
 
+invert5 :: ((Int,Int) -> Int) -> Int -> [(Int,Int)]
+invert5 f z = find (0,m) (n,0) f z
+  where
+    m  = bsearch (\y -> f (0,y)) (-1,z+1) z
+    n  = bsearch (\x -> f (x,0)) (-1,z+1) z
+    find (u,v) (r,s) f z
+      | u > r || v < s = []
+      | v - s <= r - u = rfind (bsearch (\x -> f (x,q)) (u - 1, r + 1) z)
+      | otherwise      = cfind (bsearch (\y -> f (p,y)) (s - 1, v + 1) z)
+      where
+        p = (u + r) `div` 2
+        q = (v + s) `div` 2
+        rfind p = (if f (p,q) == z then (p,q) : find (u,v) (p - 1, q + 1) f z
+                   else find (u,v) (p, q + 1) f z) ++ find (p + 1, q - 1) (r,s) f z
+        cfind q = find (u,v) (p - 1, q + 1) f z ++
+                  (if f (p,q) == z then (p,q) : find (p + 1, q - 1) (r,s) f z
+                   else find (p + 1, q) (r,s) f z)
+
+

@@ -1,4 +1,5 @@
 import Control.Monad.Writer
+import Control.Applicative
 
 default_func (x,y) = x * 3 + y * 2
 
@@ -76,6 +77,36 @@ bsearch' g (a,b) z
                              else bsearch' g (a,m) z
     where m = (a + b) `div` 2
 
+invert5' :: WriteFunc -> Int -> Wt [(Int,Int)]
+invert5' f z = do
+  m' <- m
+  n' <- n
+  find (0,m') (n',0) f z
+  where
+    m  = bsearch' (\y -> f (0,y)) (-1,z+1) z
+    n  = bsearch' (\x -> f (x,0)) (-1,z+1) z
+    find :: (Int,Int) -> (Int,Int) -> WriteFunc -> Int -> Wt [(Int,Int)]
+    find (u,v) (r,s) f z
+      | u > r || v < s = return []
+      | v - s <= r - u = rfind (bsearch' (\x -> f (x,q)) (u - 1, r + 1) z)
+      | otherwise      = cfind (bsearch' (\y -> f (p,y)) (s - 1, v + 1) z)
+      where
+        p = (u + r) `div` 2
+        q = (v + s) `div` 2
+        rfind :: Wt Int -> Wt [(Int,Int)]
+        rfind wtp = do
+          p <- wtp
+          res <- f (p,q)
+          (++) <$> (if res == z then fmap ((p,q):) (find (u,v) (p - 1, q + 1) f z)
+           else find (u,v) (p, q + 1) f z) <*> find (p + 1, q - 1) (r,s) f z
+        cfind :: Wt Int -> Wt [(Int,Int)]
+        cfind wtq = do
+          q <- wtq
+          res <- f (p,q)
+          (++) <$> find (u,v) (p - 1, q + 1) f z <*>
+                  (if res == z then fmap ((p,q) :) (find (p + 1, q - 1) (r,s) f z)
+                   else find (p + 1, q) (r,s) f z)
+
 invert_trace invs = rev $ foldl fun ([],[]) invs
                  where fun (xs, ys) res = case res of
                                             Right(x) -> (x:xs, ys)
@@ -88,6 +119,7 @@ pp_invert (xs,ys) = do
     putStrLn ""
     where pp d (zx,zy) = show zx ++ d ++ show zy
 
-main =  mapM_ pp_invert $ fmap (\f -> invert_trace $ f default_func 20) [invert, invert2, invert3, invert4]
+-- main =  mapM_ pp_invert $ fmap (\f -> invert_trace $ f default_func 20) [invert, invert2, invert3, invert4]
 
 -- main = pp_invert $ runWriter $ invert4' write_func 20
+main = pp_invert $ runWriter $ invert5' write_func 20
