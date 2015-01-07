@@ -22,4 +22,8 @@ class InvertSpec extends FlatSpec with Matchers {
       Invert.invert4(f, 20) should be (ans)
     }
 
+    it should "Invert function 5" in {
+      Invert.invert5(f, 20) should be (ans)
+    }
+
 }
