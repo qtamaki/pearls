@@ -100,12 +100,4 @@ object Sortsum2 {
                              else y :: merge((x::xs), ys)
     }
   }
-  
-//  def compare(a:(Int,Int,Int), b:(Int,Int,Int)) = (a,b) match {
-//    case ((a1,a2,a3),(b1,b2,b3)) if a1 == b1 && a2 == b2 => a3 - b3
-//    case ((a1,a2,a3),(b1,b2,b3)) if a1 == b1 => a2 - b2
-//    case ((a1,a2,a3),(b1,b2,b3)) => a1 - b1
-//  }
-  
-
 }
