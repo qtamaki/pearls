@@ -1,8 +1,16 @@
 import Data.List
 import Data.Array
 
+type Label a = (a,(Int,Int))
+
+
+sortsums :: (Ord a, Num a) => [a] -> [a] -> [a]
 sortsums xs ys = map fst (sortsubs xs (map negate ys))
+
+sortsubs :: (Ord a, Num a) => [a] -> [a] -> [Label a]
 sortsubs xs ys = sortBy (cmp (mkArray xs ys)) (subs xs ys)
+
+subs :: (Ord a, Num a) => [a] -> [a] -> [Label a]
 subs xs ys = [(x - y, (i,j))|(x,i) <- zip xs [1..], (y,j) <- zip ys [1..]]
 cmp a (x,(i,j)) (y,(k,l)) = compare (a ! (1,i,k)) (a ! (2,j,l))
 mkArray xs ys = array b (zip (table xs ys) [1..])
@@ -13,6 +21,7 @@ table xs ys   = map snd (map (tag 1) xxs `merge` map (tag 2) yys)
                       yys = sortsubs' ys
 tag i (x,(j,k)) = (x,(i,j,k))
 
+sortsubs' :: (Ord a, Num a) => [a] -> [Label a]
 sortsubs' [] = []
 sortsubs' [w] = [(w - w,(1,1))]
 sortsubs' ws = foldr1 merge [xxs, map (incr m) xys,

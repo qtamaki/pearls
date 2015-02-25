@@ -23,7 +23,7 @@ class SmallestSpec extends FlatSpec with Matchers {
     0 to 5 foreach {x =>
       Smallest.smallest(x, (ys, xs)) should be (x+1)
     }
-  }  
+  }
 
   it should "Smallest function 2" in {
     val xs = List(1,3,5)
@@ -35,7 +35,7 @@ class SmallestSpec extends FlatSpec with Matchers {
       Smallest.smallest(x, (ys, xs)) should be (x+1)
     }
   }  
-  
+
 //  it should "Smallest function long" in {
 //    val x = 10000
 //    Smallest.smallest(x, (Stream.from(0).take(x).toList, Stream.from(x).take(x).toList)) should be (x)
