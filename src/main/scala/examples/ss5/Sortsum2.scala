@@ -3,11 +3,11 @@ package examples.ss5
 object Sortsum2 {
   
   type Label = (Int,(Int,Int))
-  type TagedLabel = (Int,(Int,Int,Int))
+  type TaggedLabel = (Int,(Int,Int,Int))
   type LabeledArray = Map[(Int,Int,Int), Int]
     
-  implicit def tagedLabelOrdering: Ordering[TagedLabel] = new Ordering[TagedLabel] {
-    def compare(a:TagedLabel, b:TagedLabel) = (a,b) match {
+  implicit def taggedLabelOrdering: Ordering[TaggedLabel] = new Ordering[TaggedLabel] {
+    def compare(a:TaggedLabel, b:TaggedLabel) = (a,b) match {
       case ((i,(x,y,z)),(j,(l,m,n))) if i == j && x == l && y == m => z - n
       case ((i,(x,y,z)),(j,(l,m,n))) if i == j && x == l => y - m
       case ((i,(x,y,z)),(j,(l,m,n))) if i == j => x - l
@@ -41,8 +41,8 @@ object Sortsum2 {
   def mkArray(xs:List[Int], ys:List[Int]): LabeledArray = ???
   
   def table(xs: List[Int], ys: List[Int]):List[(Int,Int,Int)] = {
-    val xxs:List[TagedLabel] = sortsubs2(xs).map(tag(1,_))
-    val yys:List[TagedLabel] = sortsubs2(ys).map(tag(2,_))
+    val xxs:List[TaggedLabel] = sortsubs2(xs).map(tag(1,_))
+    val yys:List[TaggedLabel] = sortsubs2(ys).map(tag(2,_))
     merge(xxs, yys).map(_._2)
   } 
 
@@ -53,7 +53,7 @@ object Sortsum2 {
     else y :: merge(xs, yys)
   } 
   
-  def tag(i:Int, x: Label): TagedLabel = (x._1, (i,x._2._1, x._2._1))
+  def tag(i:Int, x: Label): TaggedLabel = (x._1, (i,x._2._1, x._2._1))
 
   def switch:PartialFunction[Label,Label] = {case (x:Int,(i,j)) => (x * -1, (j,i))}
   
