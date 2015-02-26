@@ -22,10 +22,7 @@ object Sortsum2 {
   }
 
   def mkArray(xs:List[Int], ys:List[Int]): LabeledArray = {
-    println((xs,ys))
-    val m = table(xs,ys).zip(Stream.from(1)).toMap
-    println(m)
-    m
+    table(xs,ys).zip(Stream.from(1)).toMap
   }
   
   def table(xs: List[Int], ys: List[Int]):List[(Int,Int,Int)] = {
