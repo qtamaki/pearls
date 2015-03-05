@@ -5,12 +5,8 @@ object Sortsum {
   type Label = (Int,(Int,Int))
   type TagedLabel = (Int,(Int,Int,Int))
     
-  def sortsum(xs: List[Int], ys: List[Int]): List[Int] = {
-    {for{
-      x <- xs
-      y <- ys
-    } yield x + y}.sorted
-  }
+  def sortsum(xs: List[Int], ys: List[Int]): List[Int] = 
+    (for (x <- xs; y <- ys) yield x + y).sorted
   
   def subs(xs: List[Int], ys: List[Int]): List[Label] = {
     for {
