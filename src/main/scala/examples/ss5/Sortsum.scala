@@ -5,20 +5,11 @@ object Sortsum {
   type Label = (Int,(Int,Int))
   type TagedLabel = (Int,(Int,Int,Int))
     
-  implicit def tagedLabelOrdering: Ordering[TagedLabel] = new Ordering[TagedLabel] {
-    def compare(a:TagedLabel, b:TagedLabel) = (a,b) match {
-      case ((i,(x,y,z)),(j,(l,m,n))) if i == j && x == l && y == m => z - n
-      case ((i,(x,y,z)),(j,(l,m,n))) if i == j && x == l => y - m
-      case ((i,(x,y,z)),(j,(l,m,n))) if i == j => x - l
-      case _ => a._1 - b._1 
-    }
-  }
-
   def sortsum(xs: List[Int], ys: List[Int]): List[Int] = {
-    for{
+    {for{
       x <- xs
       y <- ys
-    } yield x + y
+    } yield x + y}.sorted
   }
   
   def subs(xs: List[Int], ys: List[Int]): List[Label] = {
