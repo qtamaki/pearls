@@ -64,7 +64,7 @@ class SmallestSpec extends FlatSpec with Matchers {
   }  
   
   it should "Smallest2 function long" in {
-    val x = 10000000
+    val x = 10000
     Smallest.smallest2(x, (Stream.from(0).take(x).toVector, Stream.from(x).take(x).toVector)) should be (x)
   }
 }
