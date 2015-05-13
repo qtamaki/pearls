@@ -28,7 +28,11 @@ filter (ok . value) . extend x = filter (ok . value) . extend x . filter (ok . v
 
 -- f :: [Candidate] -> [Candidate]
 -- f = filter (ok . value)
--- f (extend datum [candidate]) = extend' datum (f [candidate])
+-- g :: datum -> [Candidate] -> [Candidate]
+-- g = extend
+-- h :: datum -> [Candidate] -> [Candidate]
+-- h = extend'
+-- f (g datum [candidate]) = h datum (f [candidate])
 
 extend' :: Datum -> [Candidate] -> [Candidate]
 
